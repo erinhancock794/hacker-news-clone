@@ -6,8 +6,8 @@
 	export let name;
 	const BASE_URL = `https://hacker-news.firebaseio.com/v0/`;
 	let ids = [];
-	let stories;
-	let promise = Promise.resolve([]);
+	let stories = [];
+	// let promise = new Promise.resolve([]);
 
 	// let storiesPromise = new Promise.resolve([]);
 
@@ -33,7 +33,7 @@
 			
 			const date = result.time ? Date(moment.unix(result.time)) : '-';
 			const url = result.url ? result.url : '-';
-			console.log(url, date);
+			// console.log(url, date);
 
 
 			const formattedData = {
@@ -44,22 +44,19 @@
 			}
 			return formattedData;
 		});
-		const r = mapStory;
 
-		console.log('mapStory', r);
-		return r;
+		return mapStory;
 	}
 
 
 	const storyResponse = async (array) => {
 		let topStories = await getTopStories(array);
-		Promise.all(topStories).then((values) => {
+		await Promise.all(topStories).then((values) => {
 			console.log('values',values)
 			stories = values;
 			console.log(' stories', stories);
-
-		})
-		// console.log('topStoriesObjects ', topStoriesObjects);
+		});
+		console.log('stories??', stories);
 		// return values;
 }
 
@@ -81,12 +78,12 @@
 
 <main>
 	<h1>{name}!</h1>
-<!-- {#each stories as story}
-<p>{story}</p>
+{#each stories as story}
+<p>{story.title}</p>
 {:else}
 <p>waiting..</p>
 	
-{/each} -->
+{/each}
 
 
 </main>
