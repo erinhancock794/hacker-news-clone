@@ -29,42 +29,43 @@
 		const mapStory = _.map(ids, async (id) => {
 			const response = await fetch(`${BASE_URL}/item/${id}.json?print=pretty`);
 			const result = await response.json();
+			// console.log('result', result);
 			
-			const date = Date(moment.unix(result.time))
+			const date = result.time ? Date(moment.unix(result.time)) : '-';
+			const url = result.url ? result.url : '-';
+			console.log(url, date);
+
 
 			const formattedData = {
 				title: result.title,
 				score: result.score,
-				url: result.url,
+				url,
 				date
 			}
 			return formattedData;
 		});
+		const r = mapStory;
 
-		console.log('mapStory', mapStory);
-		return mapStory;
+		console.log('mapStory', r);
+		return r;
 	}
 
 
 	const storyResponse = async (array) => {
-		await getTopStories(array).then(() => {
-		Promise.all((values) => {
-			stories = values;
-			return stories;
-		})
-	})
+		let topStories = await getTopStories(array);
+		let topStoriesObjects = Promise.all(topStories).then((values) => console.log('values',values))
+		console.log('topStoriesObjects ', topStoriesObjects);
+		return topStoriesObjects;
 }
 
 	onMount(async () => {
 		const res = await getIDs();
 		ids = await res;
 		console.log('ids', ids);
-		promise = storyResponse(ids);
-		stories = promise;
-		console.log('final status of promise', promise);
+		stories = await storyResponse(ids);
 		console.log('final status of stories', stories);
 
-		return promise;
+		return stories;
 
 		
 	})
