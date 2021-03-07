@@ -6,7 +6,7 @@
 	export let name;
 	const BASE_URL = `https://hacker-news.firebaseio.com/v0/`;
 	let ids = [];
-	let stories = [];
+	let stories;
 	let promise = Promise.resolve([]);
 
 	// let storiesPromise = new Promise.resolve([]);
@@ -53,19 +53,24 @@
 
 	const storyResponse = async (array) => {
 		let topStories = await getTopStories(array);
-		let topStoriesObjects = Promise.all(topStories).then((values) => console.log('values',values))
-		console.log('topStoriesObjects ', topStoriesObjects);
-		return topStoriesObjects;
+		Promise.all(topStories).then((values) => {
+			console.log('values',values)
+			stories = values;
+			console.log(' stories', stories);
+
+		})
+		// console.log('topStoriesObjects ', topStoriesObjects);
+		// return values;
 }
 
 	onMount(async () => {
 		const res = await getIDs();
 		ids = await res;
 		console.log('ids', ids);
-		stories = await storyResponse(ids);
+		await storyResponse(ids);
 		console.log('final status of stories', stories);
 
-		return stories;
+		// return stories;
 
 		
 	})
