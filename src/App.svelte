@@ -51,12 +51,11 @@
 	const storyResponse = async (array) => {
 		let topStories = await getTopStories(array);
 		await Promise.all(topStories).then((values) => {
-			console.log('values',values)
+			// console.log('values',values)
 			stories = values;
-			console.log(' stories', stories);
+			// console.log(' stories', stories);
 		});
-		console.log('stories??', stories);
-		// return values;
+		// console.log('stories??', stories);
 }
 
 	onMount(async () => {
@@ -64,10 +63,7 @@
 		ids = await res;
 		console.log('ids', ids);
 		await storyResponse(ids);
-		console.log('final status of stories', stories);
-
-		// return stories;
-
+		// console.log('final status of stories', stories);
 		
 	})
 
@@ -76,7 +72,7 @@
 </script>
 
 <main>
-	<h1>{name}!</h1>
+	<h1>{name}!!!!</h1>
 {#each stories as story}
 <div>
 	<h2>{story.title}</h2>
@@ -106,7 +102,7 @@
 	}
 
 	h1 {
-		color: #ff3e00;
+		color: #3127bb;
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
