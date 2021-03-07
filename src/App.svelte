@@ -1,13 +1,15 @@
 <script>
 
-
+	import { onMount } from 'svelte';
 	import _ from 'lodash';
+	import moment from 'moment';
 	export let name;
 	const BASE_URL = `https://hacker-news.firebaseio.com/v0/`;
 	let ids = [];
 	let stories = [];
-	// let storiesPromise = new Promise.resolve([]);
+	let promise = Promise.resolve([]);
 
+	// let storiesPromise = new Promise.resolve([]);
 
 	async function getIDs(){
 		try {
@@ -15,7 +17,6 @@
 			let fullData = await response.json();
 			ids = fullData;
 			ids.length = 30;
-			console.log(ids);
 			return ids;
 
 		} catch (error) {
@@ -23,56 +24,63 @@
 		}
 	}
 
-
-
-	let getStories = getIDs()
-	.then((ids) => {
-		console.log('ids', ids);
-		const storyInfo = _.map(ids, async (id) => {
+	async function getTopStories(ids) {
+		console.log('getTopStories is hit----', ids);
+		const mapStory = _.map(ids, async (id) => {
 			const response = await fetch(`${BASE_URL}/item/${id}.json?print=pretty`);
 			const result = await response.json();
-			// stories.push(result);
-			return result;
-		})
-		// console.log('storyInfo--', storyInfo);
-		return storyInfo;
-	})
-	getStories.then( (story) => {
-		 Promise.all(story).then((res)=> {
-			console.log('res------', res)
-			stories = res;
-			console.log('stories--------->>>>>', stories);
+			
+			const date = Date(moment.unix(result.time))
+
+			const formattedData = {
+				title: result.title,
+				score: result.score,
+				url: result.url,
+				date
+			}
+			return formattedData;
+		});
+
+		console.log('mapStory', mapStory);
+		return mapStory;
+	}
+
+
+	const storyResponse = async (array) => {
+		await getTopStories(array).then(() => {
+		Promise.all((values) => {
+			stories = values;
 			return stories;
 		})
-		// stories = res;
-		// return stories;
 	})
-	console.log('STORIES', stories)
+}
 
-	// let dataObject = {
-	// 	title: '',
-	// 	score: '',
-	// 	url: '',
-	// 	rank: ''
-	// }
+	onMount(async () => {
+		const res = await getIDs();
+		ids = await res;
+		console.log('ids', ids);
+		promise = storyResponse(ids);
+		stories = promise;
+		console.log('final status of promise', promise);
+		console.log('final status of stories', stories);
 
-	
+		return promise;
+
+		
+	})
+
+
 
 </script>
 
 <main>
 	<h1>{name}!</h1>
-	{#await getStories}
-	<p>...waiting.</p>
-		
-	{:then stories}
-	<h2>{stories}</h2>
-		{#each stories as {story}}
-			<p>{story}</p>
-		{/each}
-
-		
-	{/await}
+<!-- {#each stories as story}
+<p>{story}</p>
+{:else}
+<p>waiting..</p>
+	
+{/each} -->
 
 
 </main>
