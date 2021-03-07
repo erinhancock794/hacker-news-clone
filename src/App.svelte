@@ -9,7 +9,6 @@
 	let stories = [];
 	// let promise = new Promise.resolve([]);
 
-	// let storiesPromise = new Promise.resolve([]);
 
 	async function getIDs(){
 		try {
@@ -29,9 +28,9 @@
 		const mapStory = _.map(ids, async (id) => {
 			const response = await fetch(`${BASE_URL}/item/${id}.json?print=pretty`);
 			const result = await response.json();
-			// console.log('result', result);
+			console.log('result', result);
 			
-			const date = result.time ? Date(moment.unix(result.time)) : '-';
+			const date = result.time ? Date(moment.unix(result.time).format('YYYY-MM-DD')) : '-';
 			const url = result.url ? result.url : '-';
 			// console.log(url, date);
 
@@ -79,7 +78,17 @@
 <main>
 	<h1>{name}!</h1>
 {#each stories as story}
-<p>{story.title}</p>
+<div>
+	<h2>{story.title}</h2>
+	<div class = "data">
+	<p id="score"><span>Score: </span>{story.score} </p>
+	<p id="date"><span> Date: </span>{story.date}</p>
+</div>
+<p id="url">({story.url})</p>
+
+
+
+</div>
 {:else}
 <p>waiting..</p>
 	
@@ -102,10 +111,29 @@
 		font-size: 4em;
 		font-weight: 100;
 	}
+	h2 {
+		padding: 0;
+		margin-top: 3%;
+		margin-bottom: 0;
+	}
 
 	@media (min-width: 640px) {
 		main {
 			max-width: none;
 		}
+	}
+	span{
+		font-style: italic;
+	}
+	.data{
+		display: flex;
+		justify-content: center;
+		margin:auto;
+		padding: 0px 10px;
+		
+	}
+	#url{
+		font-size: .8rem;
+		margin:auto;
 	}
 </style>
